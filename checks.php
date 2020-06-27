@@ -1,50 +1,40 @@
+<!-- original code is in https://github.com/aaronpk/checks -->
 <?php
 date_default_timezone_set('UTC');
 include("lib/check-generator.php");
 
-$CHK = new CheckGenerator;
+// foreach ($_FILES['file'] as $key=>$value) echo $key,":",$value,"<p>"; 
+$f = $_FILES['file']['tmp_name'];
 
+if(($handle = fopen($f, 'r')) !== FALSE) {
+    // necessary if a large csv file
+    set_time_limit(0);
 
-$check['logo'] = "";
-$check['from_name'] = "Your Name";
+    $row = 0;    
+    while(($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
+        // foreach ($data as $key=>$value) echo $key,":",$value,"<p>"; 
+        if($row == 0){
+          $kks = $data;
+        }
+        else{
+          $CHK = new CheckGenerator;
+          foreach($data as $key=>$value){
+            if($kks[$key] == 'routing_number:account_number'){
+              list($check['routing_number'], $check['account_number']) = explode(':', $value);
+            }
+            else{
+            $check[$kks[$key]] = $value;  
+            }            
 
-$check['from_address1'] = "1234 E Main St";
-$check['from_address2'] = "Portland, OR 97214";
-
-$check['routing_number'] = "123000220";
-$check['account_number'] = "123456789012";
-$check['bank_1'] = "US Bank";
-$check['bank_2'] = "1225 SE Cesar E Chavez Blvd";
-$check['bank_3'] = "Portland, OR 97214-4371";
-$check['bank_4'] = "(503) 275-4550";
-
-$check['signature'] = "";
-
-$check['pay_to'] = "Zhaoou ";
-$check['amount'] = '1234.23';
-$check['date'] = "2/22/2020";
-$check['memo'] = "asdfsdaf ";
-
-// 3 checks per page
-
-$check['check_number'] = 1000;
-$CHK->AddCheck($check);
-
-$check['pay_to'] = "Zhaoou Y ";
-$check['amount'] = '1234.23';
-$check['date'] = "2/22/2021";
-$check['memo'] = "asdfsdafaf ";
-$check['check_number']++;
-$CHK->AddCheck($check);
-
-$check['pay_to'] = "Zhaoou Yu ";
-$check['amount'] = '1234.23';
-$check['date'] = "2/22/2021";
-$check['memo'] = "asdfsdafaf ";
-$check['check_number']++;
-$CHK->AddCheck($check);
-$CHK->AddCheck($check);
-
+          }
+          // 3 checks per page
+          // foreach ($check as $key=>$value) echo $key,":",$value,"<p>"; 
+          $CHK->AddCheck($check);
+        }
+        $row++;
+    }
+    fclose($handle);
+}
 
 if(array_key_exists('REMOTE_ADDR', $_SERVER)) {
   // Called from a browser
@@ -59,4 +49,5 @@ if(array_key_exists('REMOTE_ADDR', $_SERVER)) {
   file_put_contents('checks.pdf', $pdf);
   echo "Saved to file: checks.pdf\n";
 }
+
 
