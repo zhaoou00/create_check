@@ -156,7 +156,7 @@ class CheckGenerator {
 			////////////////////////
 			// fill in values for this check
 
-			$pdf->SetFont('Courier','',11);
+			$pdf->SetFont('Courier','',12);
 
 			// date
 			if( $check['date'] != "" ) {
@@ -186,7 +186,7 @@ class CheckGenerator {
 				}
 				$amt_string .= "***";
 
-				$pdf->SetFont('Courier','',9);
+				$pdf->SetFont('Courier','',12);
 				$pdf->SetXY( $x + $cell_left, $y + 1.28*$ry);
 				$pdf->Cell( 1, .25, $amt_string );
 
@@ -198,10 +198,10 @@ class CheckGenerator {
 			}
 
 			// memo
-			$pdf->SetFont('Courier','',8);
+			$pdf->SetFont('Courier','',12);
 			$pdf->SetXY( $x + $cell_left + 0.3*$rx, $y + 2.02*$ry);
 			$pdf->Cell( 1, .25, $check['memo'] );
-			$pdf->SetFont('Courier','',11);
+			$pdf->SetFont('Courier','',12);
 
 
 			// routing and account number
