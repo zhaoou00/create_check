@@ -66,6 +66,12 @@ class TestCheckGenerator(unittest.TestCase):
         pdf_bytes = cg.print_checks()
         self.assertTrue(pdf_bytes[:5] == b'%PDF-')
 
+    def test_generate_pdf_black_border(self):
+        cg = CheckGenerator()
+        cg.add_check(self._make_check())
+        pdf_bytes = cg.print_checks(black_border=True)
+        self.assertTrue(pdf_bytes[:5] == b'%PDF-')
+
     def test_generate_pdf_from_csv(self):
         """Same flow as checks.php — read input_php.csv and produce PDF."""
         csv_path = os.path.join(_DIR, 'input_php.csv')
@@ -85,7 +91,7 @@ class TestCheckGenerator(unittest.TestCase):
                         check[k] = v
                 cg.add_check(check)
         out = os.path.join(_DIR, 'checks.pdf')
-        cg.print_checks(output_path=out)
+        cg.print_checks(output_path=out, black_border=True)
         self.assertTrue(os.path.exists(out))
         print(f"\n  -> PDF saved: {out}")
 

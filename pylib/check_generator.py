@@ -29,17 +29,31 @@ class CheckGenerator:
             return s.capitalize() if ' ' not in s else s.title()
         return s.lower()
 
-    def print_checks(self, output_path=None):
+    def print_checks(self, output_path=None, black_border=False):
         # Layout constants (identical to PHP)
         page_w, page_h = 8.5, 11
-        top_margin, left_margin = 0, 0
-        columns, rows = 1, 3
+
+        # When black_border is on, scale check to 85% and center 1 per page
+        # for easy mobile deposit photography
+        if black_border:
+            scale = 0.85
+            rows, columns = 1, 1
+            rx, ry = 1.4 * scale, 1.23 * scale
+            label_h = 2.85 * ry
+            label_w = 6 * rx
+            cell_left, cell_top = 0.25 * scale, 0.25 * scale
+            logo_width = 0.5 * scale
+            left_margin = (page_w - label_w) / 2
+            top_margin = (page_h - label_h) / 2
+        else:
+            rows, columns = 3, 1
+            rx, ry = 1.4, 1.23
+            label_h = 2.85 * ry
+            label_w = 6 * rx
+            cell_left, cell_top = 0.25, 0.25
+            logo_width = 0.5
+            left_margin, top_margin = 0, 0
         gutter = 3 / 16
-        rx, ry = 1.4, 1.23
-        label_h = 2.85 * ry
-        label_w = 6 * rx
-        cell_left, cell_top = 0.25, 0.25
-        logo_width = 0.5
 
         pdf = FPDF('P', 'in', (page_w, page_h))
         pdf.add_font('Twcen', '', os.path.join(FONT_DIR, 'twcen.ttf'))
@@ -49,10 +63,45 @@ class CheckGenerator:
         pdf.set_display_mode("fullpage", "continuous")
         pdf.add_page()
 
+        def _fill_black_outside(p, pw, ph, checks_on_page):
+            """Fill everything outside the check rectangles with black."""
+            p.set_fill_color(0, 0, 0)
+            p.set_draw_color(0, 0, 0)
+            # Collect check rects on this page
+            rects = []
+            for cx, cy in checks_on_page:
+                rects.append((cx, cy, label_w, label_h))
+            # Top strip above first check
+            y_min = min(r[1] for r in rects)
+            if y_min > 0:
+                p.rect(0, 0, pw, y_min, 'F')
+            # Bottom strip below last check
+            y_max = max(r[1] + r[3] for r in rects)
+            if y_max < ph:
+                p.rect(0, y_max, pw, ph - y_max, 'F')
+            # Left/right strips and gaps between checks
+            for cx, cy, cw, ch in rects:
+                if cx > 0:
+                    p.rect(0, cy, cx, ch, 'F')
+                if cx + cw < pw:
+                    p.rect(cx + cw, cy, pw - cx - cw, ch, 'F')
+            # Draw border around each check
+            p.set_draw_color(0, 0, 0)
+            p.set_line_width(0.02)
+            for cx, cy, cw, ch in rects:
+                p.rect(cx, cy, cw, ch, 'D')
+            # Reset colors
+            p.set_fill_color(255, 255, 255)
+            p.set_draw_color(0, 0, 0)
+            p.set_line_width(0.01)
+
+        page_checks = []  # track (x, y) of checks on current page
+
         for lpos, check in enumerate(self.checks):
             pos = lpos % (rows * columns)
             x = left_margin + ((pos % columns) * (label_w + gutter))
             y = top_margin + ((pos // columns) * label_h)
+            page_checks.append((x, y))
 
             # --- Check template ---
             pdf.set_font('Twcen', '', 11)
@@ -170,7 +219,14 @@ class CheckGenerator:
 
             # Page break
             if pos == (rows * columns - 1) and lpos != len(self.checks) - 1:
+                if black_border:
+                    _fill_black_outside(pdf, page_w, page_h, page_checks)
+                    page_checks = []
                 pdf.add_page()
+
+        # Fill black on last page
+        if black_border and page_checks:
+            _fill_black_outside(pdf, page_w, page_h, page_checks)
 
         if output_path:
             pdf.output(output_path)
