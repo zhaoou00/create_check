@@ -108,7 +108,7 @@ class CheckGenerator:
 
             # Check number
             pdf.set_xy(x + 5.25 * rx, y + 0.33 * ry)
-            pdf.cell(1, 11 / 72, str(check['check_number']), align='R')
+            pdf.cell(rx / 1.4, 11 / 72, str(check['check_number']), align='R')
 
             # Logo
             logo_offset = 0

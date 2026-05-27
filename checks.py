@@ -1,10 +1,11 @@
 import csv, os, sys
 from datetime import date
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.getcwd()
+sys.path.insert(0, BASE_DIR)
 from pylib import CheckGenerator
 
-CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'monthly_withdraw.csv')
+CSV_PATH = os.path.join(BASE_DIR, 'data', 'monthly_withdraw.csv')
 today = date.today().strftime('%-m/%-d/%Y') if os.name != 'nt' else date.today().strftime('%#m/%#d/%Y')
 
 # Read, increment check_number, update date
@@ -40,6 +41,6 @@ for row in rows:
             check[k] = v
     cg.add_check(check)
 
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'checks.pdf')
+out = os.path.join(BASE_DIR, 'checks.pdf')
 cg.print_checks(output_path=out, black_border=True)
 print(f"PDF saved: {out}")
