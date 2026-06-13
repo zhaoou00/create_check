@@ -1,4 +1,5 @@
 import csv, os, sys
+import tkinter as tk
 from datetime import date
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__)) if '__file__' in globals() else os.getcwd()
@@ -26,6 +27,37 @@ with open(CSV_PATH, 'w', newline='') as f:
 
 print(f"Updated {len(rows)} checks: check_number +1, date -> {today}")
 
+# GUI for entering amounts
+root = tk.Tk()
+root.title("Check Amounts")
+
+entries = []
+for i, row in enumerate(rows):
+    label = f"{row['from_name']} - {row.get('bank_1','')} (#{row['check_number']})"
+    tk.Label(root, text=label, anchor='w').grid(row=i, column=0, sticky='w', padx=5, pady=2)
+    entry = tk.Entry(root, width=10)
+    entry.grid(row=i, column=1, padx=5, pady=2)
+    entries.append(entry)
+
+def generate():
+    for i, entry in enumerate(entries):
+        rows[i]['amount'] = entry.get().strip()
+    # Save amounts back to CSV
+    with open(CSV_PATH, 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+    root.destroy()
+
+tk.Button(root, text="Generate PDF", command=generate).grid(row=len(rows), column=0, columnspan=2, pady=10)
+root.mainloop()
+
+SIGNATURES = {
+    'Zhaoou Yu': os.path.join(BASE_DIR, 'data', 'zhaoou_signature.png'),
+    'Kelly Ju': os.path.join(BASE_DIR, 'data', 'kelly_signature.png'),
+    'ZOHL REALTY LLC': os.path.join(BASE_DIR, 'data', 'kelly_signature.png'),
+}
+
 # Generate PDF
 cg = CheckGenerator()
 for row in rows:
@@ -39,6 +71,7 @@ for row in rows:
             check['account_number'] = parts[1] if len(parts) > 1 else ''
         else:
             check[k] = v
+    check['signature'] = SIGNATURES.get(row['from_name'], '')
     cg.add_check(check)
 
 out = os.path.join(BASE_DIR, 'checks.pdf')

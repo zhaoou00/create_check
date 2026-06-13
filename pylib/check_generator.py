@@ -205,7 +205,7 @@ class CheckGenerator:
             # Signature
             sig = check.get('signature', '')
             if sig.endswith('png'):
-                pdf.image(sig, x + cell_left + 3.4 * rx, y + 1.88 * ry, 1.75 * rx)
+                pdf.image(sig, x + cell_left + 3.4 * rx, y + 1.68 * ry, 1.225 * rx)
             elif sig:
                 pdf.set_font('Twcen', '', 10)
                 pdf.set_xy(x + cell_left + 3.4 * rx, y + 2.01 * ry)

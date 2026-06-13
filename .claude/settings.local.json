@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"from PIL import Image; Image.open\\('zhaoou_signature.bmp'\\).save\\('zhaoou_signature.png'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 *)",
+      "Bash(where.exe python *)",
+      "Bash(cmd.exe /c \"where python\")",
+      "Read(//mnt/c/Users/zyu12/AppData/Local/Programs/Python/**)"
+    ]
+  }
+}
