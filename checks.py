@@ -33,7 +33,8 @@ root.title("Check Amounts")
 
 entries = []
 for i, row in enumerate(rows):
-    label = f"{row['from_name']} - {row.get('bank_1','')} (#{row['check_number']})"
+    acct = row.get('routing_number:account_number', '').split(':')[-1]
+    label = f"{row['from_name']} - {row.get('bank_1','')} (x{acct[-4:]})"
     tk.Label(root, text=label, anchor='w').grid(row=i, column=0, sticky='w', padx=5, pady=2)
     entry = tk.Entry(root, width=10)
     entry.grid(row=i, column=1, padx=5, pady=2)
