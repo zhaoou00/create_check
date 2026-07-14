@@ -7,7 +7,23 @@
       "Bash(python3 *)",
       "Bash(where.exe python *)",
       "Bash(cmd.exe /c \"where python\")",
-      "Read(//mnt/c/Users/zyu12/AppData/Local/Programs/Python/**)"
+      "Read(//mnt/c/Users/zyu12/AppData/Local/Programs/Python/**)",
+      "Bash(python3 -c \"from pylib import CheckGenerator; print\\('ok'\\)\")",
+      "Bash(python3 -c \"import fpdf\")",
+      "Bash(cmd.exe /c \"py -c \\\\\"import sys; print\\(sys.executable\\)\\\\\"\")",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -c 'import sys,fpdf; print\\(sys.executable\\); print\\('\\\\''fpdf'\\\\'', getattr\\(fpdf,'\\\\''__version__'\\\\'','\\\\''?'\\\\''\\)\\)')",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -m pip uninstall -y fpdf fpdf2)",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -m pip install fpdf2)",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -c 'import fpdf; print\\('\\\\''fpdf'\\\\'', fpdf.__version__\\)')",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -m pip --version)",
+      "Bash(echo \"EXIT $?\")",
+      "Read(//tmp/**)",
+      "Bash(/mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/python.exe -c 'import fpdf; print\\(fpdf.__file__\\); print\\(getattr\\(fpdf,'\\\\''__version__'\\\\'','\\\\''?'\\\\''\\)\\)')",
+      "Read(//mnt/c/Users/zyu12/AppData/Roaming/Python/Python313/site-packages/**)",
+      "Read(//mnt/c/Users/zyu12/AppData/Local/Programs/Python/Python313/Lib/site-packages/**)",
+      "Bash(python3 -c \"import fpdf, inspect, os; print\\('version:', getattr\\(fpdf,'__version__','?'\\)\\); print\\('file:', fpdf.__file__\\)\")",
+      "Bash(pip show *)",
+      "Bash(code *)"
     ]
   }
 }
